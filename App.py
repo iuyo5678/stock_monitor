@@ -1,32 +1,33 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Time-stamp: <2017-01-05 17:35:23 Thursday by wls81>
+# Time-stamp: <2017-01-06 18:23:55 Friday by wls81>
 
 from Tkinter import *
-import tkMessageBox
+from event_engine import *
+from api import TushareAPI
 
 class Application(Frame):
     def __init__(self, master=None):
         Frame.__init__(self, master)
         self.pack()
-        self.createWidgets()
+        self.create_widgets()
+        self.tuAPI = TushareAPI()
+        
+    def create_widgets(self):
+        self.price_label = Label(self ,width=170,height='40',font='Fixdsys -15', text="")
+        self.price_label.pack()
 
-    def createWidgets(self):
-        self.nameInput = Entry(self)
-        self.nameInput.pack()
-        self.alertButton = Button(self, text='Hello', command=self.hello)
-        self.alertButton.pack()
-
-    def hello(self):
-        name = self.nameInput.get() or 'world'
-        tkMessageBox.showinfo('Message', 'Hello, %s' % name)
+    def update_value(self):
+        value = self.tuAPI.get_stock_price('000333')[0]
+        self.price_label.configure(text=value)
+        self.after(1000, self.update_value)
 
 def main():
     app = Application()
     # 设置窗口标题:
-    app.master.title('Hello World')
-    # 主消息循环:
+    app.master.title('simple stock monior')
+    app.update_value()
     app.mainloop()
 
 if __name__ == "__main__":
