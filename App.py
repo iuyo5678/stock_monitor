@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# Time-stamp: <2017-01-06 18:23:55 Friday by wls81>
+# Time-stamp: <2017-01-18 16:57:08 Wednesday by wls81>
 
 from Tkinter import *
 from event_engine import *
@@ -19,12 +19,19 @@ class Application(Frame):
         self.price_label.pack()
 
     def update_value(self):
-        value = self.tuAPI.get_stock_price('000333')[0]
-        self.price_label.configure(text=value)
+        stock_info = self.tuAPI.get_stock_info('000333')
+        if stock_info['price'][0] >= stock_info['open'][0]:
+            fg = "red"
+        else:
+            fg = "green"
+        self.price_label.configure(text=stock_info['price'][0], fg=fg)
         self.after(1000, self.update_value)
 
 def main():
-    app = Application()
+    root = Tk()
+    # 设置窗口固定再最前面
+    root.wm_attributes('-topmost',1)
+    app = Application(root)
     # 设置窗口标题:
     app.master.title('simple stock monior')
     app.update_value()
